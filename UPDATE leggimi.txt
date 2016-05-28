@@ -1,0 +1,1 @@
+Ho cambiato un po' di cose per avere la mappa, adesso è un frame, non ci sono più prolemi di visualizzazione, ho aggiunto anche un file googlemap.js, adesso scrivendo delle coordinate negli input va a beccare il luogo sulla mappa. Prova a vedere se è una roba che ti piace o vuoi tornare a prima.
