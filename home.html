@@ -172,6 +172,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
           <div class="w3-card-2 w3-round w3-white">
             <div class="w3-container w3-padding">
               <h6 class="w3-opacity">Pubblica un luogo</h6>
+			  <div class="w3-container w3-padding" >
+				<iframe id="map" frameborder="0" style="border:0;width:100%;height:300px;" src="https://www.google.com/maps/embed/v1/place?q=(-34.397,150.644)&key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw" allowfullscreen></iframe>		
+			  </div>
               <p><input id="luogo_lat" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci latitudine"></p>
               <p><input id="luogo_lon" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci longitudine"></p>
               <button type="button" class="w3-btn w3-theme" onclick=""><i class="fa fa-globe"></i>  Luogo</button>
@@ -190,6 +193,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
          x[i].style.display = "none";  
         }
        document.getElementById(cityName).style.display = "block";  
+	   
        }
       </script>
       
@@ -256,7 +260,6 @@ function myFunction(id) {
         x.previousElementSibling.className.replace(" w3-theme-d1", "");
     }
 }
-
 // Used to toggle the menu on smaller screens when clicking on the menu button
 function openNav() {
     var x = document.getElementById("navDemo");
@@ -267,6 +270,6 @@ function openNav() {
     }
 }
 </script>
-
+<script src="googlemap.js"></script>
 </body>
 </html> 
