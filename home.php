@@ -1,3 +1,13 @@
+<?php
+	session_start();
+	
+	$user = $_SESSION["user"];
+	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	
+	$query_res = pg_query($conn, "SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo FROM cinguettio WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo FROM immagine WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo FROM luogo WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC)) AS bacheca LIMIT 5");
+	
+?>
+
 <!DOCTYPE html>
 <html>
 <title>Cinguettio</title>
@@ -133,7 +143,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
          <ul class="w3-navbar">
           <li class="w3-theme-d2"><a href="#" onclick="openCity('post')"><strong>Post</strong></a></li>
           <li class="w3-theme-d2"><a href="#" onclick="openCity('immagine')"><strong>Immagine</strong></a></li>
-          <li class="w3-theme-d2"><a href="#" onclick="openCity('luogo')"><strong>Luogo</strong></a></li>
+          <li class="w3-theme-d2"><a href="#" onclick="openCity('luogo'); centerMap()"><strong>Luogo</strong></a></li>
          </ul>
 	    </div>
 	   </div>
@@ -173,7 +183,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
             <div class="w3-container w3-padding">
               <h6 class="w3-opacity">Pubblica un luogo</h6>
 			  <div class="w3-container w3-padding" >
-				<iframe id="map" frameborder="0" style="border:0;width:100%;height:300px;" src="https://www.google.com/maps/embed/v1/place?q=(-34.397,150.644)&key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw" allowfullscreen></iframe>		
+				<div id="map" class="w3-container w3-padding" style='width:100%;height:400px;'></div>		
 			  </div>
               <p><input id="luogo_lat" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci latitudine"></p>
               <p><input id="luogo_lon" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci longitudine"></p>
@@ -197,7 +207,84 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
        }
       </script>
       
-      <div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
+	  
+	  <?php
+	  	
+        while ($row = pg_fetch_assoc($result)) {
+			if($row["id_cinguettio"]!=NULL){
+				
+				$cing_res = pg_query($conn, "SELECT * FROM cinguettio WHERE mail = '$row["mail"]' AND id_cinguettio = $row["id_cinguettio"]");
+				$cing = pg_fetch_assoc($cing_res);
+				
+				$mail = $cing["mail"];
+				$id = "".$cing["id_cinguettio"].",".$mail;
+				$data = $cing["data_e_ora"];
+				$testo = $cing["testo"];
+				
+				print <<<EOL
+<div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
+<img id="avatar_$id" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+<span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
+<h4 id="nome_seguito_$id">$mail</h4><br>
+<hr class="w3-clear">
+<p id="testo_cinguettio_$id">$testo</p>
+<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
+<button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
+</div> 
+EOL
+			} else if($row["id_immagine"]!=NULL){
+				
+				$cing_res = pg_query($conn, "SELECT * FROM immagine WHERE mail = '$row["mail"]' AND id_cinguettio = $row["id_immagine"]");
+				$cing = pg_fetch_assoc($cing_res);
+				
+				$mail = $cing["mail"];
+				$id = "".$cing["id_immagine"].",".$mail;
+				$data = $cing["data_e_ora"];
+				$url = $cing["url"];
+				$desc = $cing["descrizione"];
+				
+				print <<<EOL
+<div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
+<img id="avatar_$id" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+<span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
+<h4 id="nome_seguito_$id">$mail</h4><br>
+<hr class="w3-clear">
+<p id="immagine_descrizione_$id">$desc</p>
+<img id="immagine_url_$id" src="$url" style="width:100%" class="w3-margin-bottom">
+<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
+<button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
+</div> 
+EOL
+			} else {
+				
+				$cing_res = pg_query($conn, "SELECT * FROM luogo WHERE mail = '$row["mail"]' AND id_luogo = $row["id_immagine"]");
+				$cing = pg_fetch_assoc($cing_res);
+				
+				$mail = $cing["mail"];
+				$id = "".$cing["id_luogo"].",".$mail;
+				$data = $cing["data_e_ora"];
+				$lat = $cing["latitudine"];
+				$lon = $cing["longitudine"];
+				
+				print <<<EOL
+<div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
+<img id="avatar_$id" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+<span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
+<h4 id="nome_seguito_$id">$mail</h4><br>
+<hr class="w3-clear">
+<iframe width="100%" height="400px" style="border:0" src="https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lon&zoom=16&key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw"></iframe>
+<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
+<button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
+</div> 
+EOL
+			}
+		}
+		
+	  ?>
+      <!-- <div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
         <img id="avatar_seguito" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
         <span id="timestamp" class="w3-right w3-opacity">32 min</span>
         <h4 id="nome_seguito">Angie Jane</h4><br>
@@ -208,7 +295,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 		<button id="apprezzamento" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
         <button id="preferimento" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
         <button type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
-      </div> 
+      </div> -->
       
     <!-- End Middle Column -->
     </div>
@@ -270,6 +357,8 @@ function openNav() {
     }
 }
 </script>
+
+<script src="http://maps.googleapis.com/maps/api/js"></script>
 <script src="googlemap.js"></script>
 </body>
-</html> 
+</html>
