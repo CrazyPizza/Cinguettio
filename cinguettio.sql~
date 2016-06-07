@@ -1,0 +1,491 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.5.2
+-- Dumped by pg_dump version 9.5.2
+
+-- Started on 2016-06-07 12:39:59
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 1 (class 3079 OID 12355)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2174 (class 0 OID 0)
+-- Dependencies: 1
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 181 (class 1259 OID 16394)
+-- Name: apprezzamento; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE apprezzamento (
+    descrizione character varying(50) NOT NULL,
+    data date NOT NULL,
+    ora time with time zone NOT NULL,
+    id_immagine numeric,
+    creatore_immagine character varying,
+    apprezzante character varying
+);
+
+
+ALTER TABLE apprezzamento OWNER TO postgres;
+
+--
+-- TOC entry 182 (class 1259 OID 16400)
+-- Name: cinguettio; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE cinguettio (
+    id_cinguettio numeric NOT NULL,
+    mail character varying NOT NULL,
+    data_e_ora timestamp with time zone NOT NULL,
+    testo character varying(100) NOT NULL
+);
+
+
+ALTER TABLE cinguettio OWNER TO postgres;
+
+--
+-- TOC entry 183 (class 1259 OID 16406)
+-- Name: esperto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE esperto (
+    mail character varying NOT NULL,
+    data date NOT NULL
+);
+
+
+ALTER TABLE esperto OWNER TO postgres;
+
+--
+-- TOC entry 184 (class 1259 OID 16412)
+-- Name: immagine; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE immagine (
+    id_immagine numeric NOT NULL,
+    mail character varying NOT NULL,
+    data_e_ora timestamp with time zone NOT NULL,
+    url character varying NOT NULL,
+    descrizione character varying(20)
+);
+
+
+ALTER TABLE immagine OWNER TO postgres;
+
+--
+-- TOC entry 185 (class 1259 OID 16418)
+-- Name: luogo; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE luogo (
+    id_luogo numeric NOT NULL,
+    mail character varying NOT NULL,
+    data_e_ora timestamp with time zone NOT NULL,
+    latitudine numeric(8,6) NOT NULL,
+    longitudine numeric(9,6) NOT NULL
+);
+
+
+ALTER TABLE luogo OWNER TO postgres;
+
+--
+-- TOC entry 186 (class 1259 OID 16424)
+-- Name: segnalato; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE segnalato (
+    id_cinguettio numeric NOT NULL,
+    mail character varying NOT NULL,
+    segnalante character varying NOT NULL,
+    CONSTRAINT not_self CHECK (((mail)::text <> (segnalante)::text))
+);
+
+
+ALTER TABLE segnalato OWNER TO postgres;
+
+--
+-- TOC entry 187 (class 1259 OID 16431)
+-- Name: segue; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE segue (
+    segue character varying NOT NULL,
+    seguito character varying NOT NULL
+);
+
+
+ALTER TABLE segue OWNER TO postgres;
+
+--
+-- TOC entry 188 (class 1259 OID 16437)
+-- Name: utente; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE utente (
+    mail character varying NOT NULL,
+    password character varying NOT NULL,
+    nome character varying NOT NULL,
+    cognome character varying NOT NULL,
+    data_nascita date,
+    luogo_nascita character varying,
+    "città_residenza" character varying,
+    sesso boolean DEFAULT true NOT NULL,
+    logged boolean DEFAULT false NOT NULL,
+    id_luogo numeric,
+    creatore_luogo character varying,
+    "nazionalità" character varying
+);
+
+
+ALTER TABLE utente OWNER TO postgres;
+
+--
+-- TOC entry 2159 (class 0 OID 16394)
+-- Dependencies: 181
+-- Data for Name: apprezzamento; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY apprezzamento (descrizione, data, ora, id_immagine, creatore_immagine, apprezzante) FROM stdin;
+"Me pias no trop	2016-05-25	19:30:38.586891+02	10000	marcolino@outlook.com	giapponeole@gmail.com
+Bellaaaaa	2016-05-25	19:30:26.754389+02	10001	googlefan@gmail.com	giapponeole@gmail.com"
+\.
+
+
+--
+-- TOC entry 2160 (class 0 OID 16400)
+-- Dependencies: 182
+-- Data for Name: cinguettio; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cinguettio (id_cinguettio, mail, data_e_ora, testo) FROM stdin;
+10000	steve@outlook.com	2016-05-26 13:37:00+02	Concerto a Quarto Oggiaro alle 17.00
+10000	sempremorto@hotmail.it	2015-05-18 10:11:05.386907+02	Anata wa Furīza to tatakau tame ni ikimasu! Brrrrr....
+10000	googlefan@gmail.com	2016-05-18 10:15:19.013571+02	Viva Android! Ios lagga!!!
+10000	bisboccia90@gmail.com	2016-04-23 10:15:57.413235+02	La parte migliore della festa è il cocktail di gamberetti ;)
+10000	richard@gmail.com	2016-05-18 00:17:28.292267+02	Anche stasera SuShi!!!
+10001	sempremorto@hotmail.it	2016-05-25 19:12:31.236056+02	Ōbu o mitsukeru to watashi o sosei
+10000	giapponeole@gmail.com	2016-05-25 19:14:39.500196+02	Gotta checciemmoll
+10001	giapponeole@gmail.com	2016-05-25 19:17:31.374849+02	Viva i pokemooooon
+10002	giapponeole@gmail.com	2016-05-25 19:18:05.343249+02	Sono depressa
+\.
+
+
+--
+-- TOC entry 2161 (class 0 OID 16406)
+-- Dependencies: 183
+-- Data for Name: esperto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY esperto (mail, data) FROM stdin;
+giapponeole@gmail.com	2016-05-25
+\.
+
+
+--
+-- TOC entry 2162 (class 0 OID 16412)
+-- Dependencies: 184
+-- Data for Name: immagine; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY immagine (id_immagine, mail, data_e_ora, url, descrizione) FROM stdin;
+10000	badass99@gmail.com	2016-04-23 09:46:23.892891+02	https://openclipart.org/download/225309/Russia.svg	MotherFucker RUSSIA
+10001	richard@gmail.com	2016-05-18 09:42:00.461877+02	http://i2.wp.com/www.viaggi-lowcost.info/wp-content/uploads/2014/08/Hofbr%C3%83%C2%A4uhaus-monaco.jpg?resize=658%2C340	Birreria di Hitler
+10000	marcolino@outlook.com	2016-04-18 09:55:52.840644+02	http://www.focus.it/site_stored/imgs/0003/007/aperturabomba.630x360.jpg	BOOOM!!!!!
+10000	worder_s@outlook.com	2015-05-18 09:54:04.342953+02	http://orig04.deviantart.net/95cb/f/2015/027/8/f/_murica_cant_hear_you_over_their_freedom__by_destinysreward-d8flm4d.jpg	MURICA!
+10001	bisboccia90@gmail.com	2016-05-18 09:54:50.023103+02	http://valleysleepcenter.com/blog/wp-content/uploads/2013/08/bigstock-Man-comfortably-sleeping-in-hi-15694625.jpg	Io adesso...zzz
+10001	marcolino@outlook.com	2016-05-18 09:56:18.215865+02	http://sognienumeri.it/wp-content/uploads/2015/10/sognare-esplosione.jpg	BAAAANG!!!!
+10002	googlefan@gmail.com	2016-05-25 19:12:56.054381+02	http://it.ubergizmo.com/wp-content/uploads/2013/06/android-vs-apple.jpg	Apple sucks
+10001	googlefan@gmail.com	2015-08-05 07:47:38.438481+02	https://pbs.twimg.com/profile_images/616076655547682816/6gMRtQyY.jpg	UHUUUUUU ANDROID!
+10002	richard@gmail.com	2016-05-25 19:13:03.18013+02	https://upload.wikimedia.org/wikipedia/commons/9/93/Golfo_di_Sal%C3%B2.JPG	Salò e il suo lago
+10004	sempremorto@hotmail.it	2016-01-18 09:52:48.860451+01	http://www.dbfamily.altervista.org/immaginidbz/Crilin2/Crilin_02.jpg	Kyūjitsu
+10003	sempremorto@hotmail.it	2016-05-17 23:51:59.804893+02	http://vignette2.wikia.nocookie.net/dragonball/images/2/26/Render_crilin_prima_serie_by_poh2000-d4n0b9t.png/revision/latest?cb=20141121202831&path-prefix=it	Kodomo no koro
+10002	sempremorto@hotmail.it	2016-05-18 09:50:11.195522+02	http://vignette1.wikia.nocookie.net/nonciclopedia/images/1/10/Crilin2.jpg/revision/latest?cb=20090831223757	Watashi wa
+\.
+
+
+--
+-- TOC entry 2163 (class 0 OID 16418)
+-- Dependencies: 185
+-- Data for Name: luogo; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY luogo (id_luogo, mail, data_e_ora, latitudine, longitudine) FROM stdin;
+10003	richard@gmail.com	2016-05-18 09:28:47.643089+02	48.137795	11.580229
+10005	sempremorto@hotmail.it	2016-05-18 10:25:38.286404+02	23.000000	-142.445643
+10004	badass99@gmail.com	2016-05-25 19:13:27.785652+02	19.223233	-164.333445
+10003	badass99@gmail.com	2016-04-18 10:04:06.880708+02	45.000000	180.000000
+10002	badass99@gmail.com	2016-05-25 19:13:21.878845+02	34.445768	-12.334567
+10001	badass99@gmail.com	2016-05-18 00:02:26.388038+02	-23.345641	-123.123456
+10002	marcolino@outlook.com	2016-05-25 19:13:37.493147+02	12.444550	1.000000
+10004	richard@gmail.com	2016-05-18 09:31:40.147266+02	45.599655	10.519028
+\.
+
+
+--
+-- TOC entry 2164 (class 0 OID 16424)
+-- Dependencies: 186
+-- Data for Name: segnalato; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY segnalato (id_cinguettio, mail, segnalante) FROM stdin;
+10000	googlefan@gmail.com	badass99@gmail.com
+10002	giapponeole@gmail.com	captainrussia@hotmail.com
+\.
+
+
+--
+-- TOC entry 2165 (class 0 OID 16431)
+-- Dependencies: 187
+-- Data for Name: segue; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY segue (segue, seguito) FROM stdin;
+bisboccia90@gmail.com	worder_s@outlook.com
+captainrussia@hotmail.com	badass99@gmail.com
+giapponeole@gmail.com	sempremorto@hotmail.it
+captainrussia@hotmail.com	steve@outlook.com
+marcolino@outlook.com	googlefan@gmail.com
+giapponeole@gmail.com	googlefan@gmail.com
+giapponeole@gmail.com	bisboccia90@gmail.com
+captainrussia@hotmail.com	googlefan@gmail.com
+marcolino@outlook.com	badass99@gmail.com
+bisboccia90@gmail.com	giapponeole@gmail.com
+\.
+
+
+--
+-- TOC entry 2166 (class 0 OID 16437)
+-- Dependencies: 188
+-- Data for Name: utente; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY utente (mail, password, nome, cognome, data_nascita, luogo_nascita, "città_residenza", sesso, logged, id_luogo, creatore_luogo, "nazionalità") FROM stdin;
+bisboccia90@gmail.com	festa	Marco	Marcondino	1990-05-26	Lodi	Lodi	t	f	\N	\N	Italia
+marcolino@outlook.com	arduinoLove	Marcolino	Coppolati	1987-01-13	Canusa	Canusa	t	f	\N	\N	Italia
+sempremorto@hotmail.it	portafogli	Crilin	Alberti	1981-09-03	Tokyo	Milano	t	f	\N	\N	Giappone
+googlefan@gmail.com	AndroidBestOs	Giulia	Rossi	1999-04-30	Pavia	Pavia	f	f	\N	\N	Italia
+badass99@gmail.com	russia_power	Vladimir	Putin	1960-07-10	Moscow	Moscow	t	f	\N	\N	Russia
+worder_s@outlook.com	muricaSwag	Wonder	Woman	1987-06-13	Boston	New York	f	f	\N	\N	USA
+richard@gmail.com	gatto123	Richard David	Greco	1990-12-28	Lodi	Lodi	t	f	\N	\N	Italia
+steve@outlook.com	occhiali_da_sole	Stevie	Wonder	1960-04-05	New York	Washington	t	f	\N	\N	USA
+giapponeole@gmail.com	hosomaki	Erminia	Lopinto	1991-01-01	Milano	Milano	f	f	10005	sempremorto@hotmail.it	Italia
+captainrussia@hotmail.com	vodkaPutin9	Dimitri	Sokov	1980-08-15	Moscow	Moscow	t	f	10001	badass99@gmail.com	Russia
+\.
+
+
+--
+-- TOC entry 2019 (class 2606 OID 16446)
+-- Name: apprezzamento_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY apprezzamento
+    ADD CONSTRAINT apprezzamento_pkey PRIMARY KEY (descrizione, data, ora);
+
+
+--
+-- TOC entry 2021 (class 2606 OID 16448)
+-- Name: cinguettio_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cinguettio
+    ADD CONSTRAINT cinguettio_pkey PRIMARY KEY (id_cinguettio, mail);
+
+
+--
+-- TOC entry 2023 (class 2606 OID 16450)
+-- Name: esperto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY esperto
+    ADD CONSTRAINT esperto_pkey PRIMARY KEY (mail);
+
+
+--
+-- TOC entry 2025 (class 2606 OID 16452)
+-- Name: immagine_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY immagine
+    ADD CONSTRAINT immagine_pkey PRIMARY KEY (id_immagine, mail);
+
+
+--
+-- TOC entry 2027 (class 2606 OID 16454)
+-- Name: luogo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY luogo
+    ADD CONSTRAINT luogo_pkey PRIMARY KEY (id_luogo, mail);
+
+
+--
+-- TOC entry 2029 (class 2606 OID 16456)
+-- Name: segnalati_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY segnalato
+    ADD CONSTRAINT segnalati_pkey PRIMARY KEY (id_cinguettio, mail, segnalante);
+
+
+--
+-- TOC entry 2031 (class 2606 OID 16458)
+-- Name: segue_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY segue
+    ADD CONSTRAINT segue_pkey PRIMARY KEY (segue, seguito);
+
+
+--
+-- TOC entry 2033 (class 2606 OID 16460)
+-- Name: utente_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY utente
+    ADD CONSTRAINT utente_pkey PRIMARY KEY (mail);
+
+
+--
+-- TOC entry 2034 (class 2606 OID 16461)
+-- Name: apprezzamento_apprezzante_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY apprezzamento
+    ADD CONSTRAINT apprezzamento_apprezzante_fkey FOREIGN KEY (apprezzante) REFERENCES esperto(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2035 (class 2606 OID 16466)
+-- Name: apprezzamento_id_immagine_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY apprezzamento
+    ADD CONSTRAINT apprezzamento_id_immagine_fkey FOREIGN KEY (id_immagine, creatore_immagine) REFERENCES immagine(id_immagine, mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2036 (class 2606 OID 16471)
+-- Name: cinguettio_mail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cinguettio
+    ADD CONSTRAINT cinguettio_mail_fkey FOREIGN KEY (mail) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2037 (class 2606 OID 16476)
+-- Name: esperti_mail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY esperto
+    ADD CONSTRAINT esperti_mail_fkey FOREIGN KEY (mail) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2038 (class 2606 OID 16481)
+-- Name: immagine_mail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY immagine
+    ADD CONSTRAINT immagine_mail_fkey FOREIGN KEY (mail) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2039 (class 2606 OID 16486)
+-- Name: luogo_creatore_luogo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY luogo
+    ADD CONSTRAINT luogo_creatore_luogo_fkey FOREIGN KEY (mail) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2040 (class 2606 OID 16491)
+-- Name: segnalati_id_cinguettio_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY segnalato
+    ADD CONSTRAINT segnalati_id_cinguettio_fkey FOREIGN KEY (id_cinguettio, mail) REFERENCES cinguettio(id_cinguettio, mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2041 (class 2606 OID 16496)
+-- Name: segnalati_segnalante_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY segnalato
+    ADD CONSTRAINT segnalati_segnalante_fkey FOREIGN KEY (segnalante) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2042 (class 2606 OID 16501)
+-- Name: segue_mail_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY segue
+    ADD CONSTRAINT segue_mail_fkey FOREIGN KEY (segue) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2043 (class 2606 OID 16506)
+-- Name: segue_seguito_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY segue
+    ADD CONSTRAINT segue_seguito_fkey FOREIGN KEY (seguito) REFERENCES utente(mail) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2044 (class 2606 OID 16511)
+-- Name: utente_id_luogo_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY utente
+    ADD CONSTRAINT utente_id_luogo_fkey FOREIGN KEY (id_luogo, creatore_luogo) REFERENCES luogo(id_luogo, mail) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 2173 (class 0 OID 0)
+-- Dependencies: 7
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2016-06-07 12:39:59
+
+--
+-- PostgreSQL database dump complete
+--
+

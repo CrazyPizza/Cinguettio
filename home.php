@@ -2,7 +2,7 @@
 	session_start();
 	
 	$user = $_SESSION["user"];
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = pg_connect("host=localhost port=5432 dbname=cinguettio user=postgres password=unimi");
 	
 	$query_res = pg_query($conn, "SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo FROM cinguettio WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo FROM immagine WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo FROM luogo WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC)) AS bacheca LIMIT 5");
 	
@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="w3-theme-blue-grey.css">
 <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<script src="buttonhandler.js"></script>
 <style>
 html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 </style>
@@ -155,7 +156,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
             <div class="w3-container w3-padding">
               <h6 class="w3-opacity">Pubblica un cinguettio</h6>
               <p><input id="post_text" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci max 100 caratteri"></p>
-              <button type="button" class="w3-btn w3-theme" onclick=""><i class="fa fa-pencil"></i>  Post</button>
+              <button type="button" class="w3-btn w3-theme" onclick="pubblica('cinguettio')"><i class="fa fa-pencil"></i>  Post</button>
             </div>
           </div>
         </div>
@@ -168,8 +169,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
           <div class="w3-card-2 w3-round w3-white">
             <div class="w3-container w3-padding">
               <h6 class="w3-opacity">Pubblica un'immagine</h6>
-              <p><input id="immagine_text" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci link immagine"></p>
-              <button type="button" class="w3-btn w3-theme" onclick=""><i class="fa fa-camera-retro"></i>  Immagine</button>
+              <p><input id="immagine_desc" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci descrizione immagine"></p>
+			  <p><input id="immagine_url" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci link immagine"></p>
+              <button type="button" class="w3-btn w3-theme" onclick="pubblica('immagine')"><i class="fa fa-camera-retro"></i>  Immagine</button>
             </div>
           </div>
         </div>
@@ -187,7 +189,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 			  </div>
               <p><input id="luogo_lat" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci latitudine"></p>
               <p><input id="luogo_lon" class="w3-input w3-border w3-hover-blue" type="text" placeholder="Inserisci longitudine"></p>
-              <button type="button" class="w3-btn w3-theme" onclick=""><i class="fa fa-globe"></i>  Luogo</button>
+              <button type="button" class="w3-btn w3-theme" onclick="pubblica('luogo')"><i class="fa fa-globe"></i>  Luogo</button>
             </div>
           </div>
         </div>
@@ -207,13 +209,28 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
        }
       </script>
       
+		<button id="modal_button" onclick="document.getElementById('id01').style.display='block'" class="w3-btn" style="display:none;"></button>
+
+		<div id="modal_post" class="w3-modal">
+			<div class="w3-modal-content">
+				<div class="w3-container">
+					<span id="modal_close" onclick="document.getElementById('modal_post').style.display='none'" class="w3-closebtn">&times;</span>
+					<p>Some text. Some text. Some text.</p>
+					<p>Some text. Some text. Some text.</p>
+				</div>
+			</div>
+		</div>
 	  
 	  <?php
 	  	
-        while ($row = pg_fetch_assoc($result)) {
+        while ($row = pg_fetch_assoc($query_res)) {
+			
+			$row_mail = $row["mail"];
+			
 			if($row["id_cinguettio"]!=NULL){
 				
-				$cing_res = pg_query($conn, "SELECT * FROM cinguettio WHERE mail = '$row["mail"]' AND id_cinguettio = $row["id_cinguettio"]");
+				
+				$cing_res = pg_query($conn, "SELECT * FROM cinguettio WHERE mail = '$row_mail' AND id_cinguettio = ".$row["id_cinguettio"]);
 				$cing = pg_fetch_assoc($cing_res);
 				
 				$mail = $cing["mail"];
@@ -230,12 +247,13 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <p id="testo_cinguettio_$id">$testo</p>
 <button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
 <button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
-<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-close"></i>  Segnala</button>
 </div> 
-EOL
-			} else if($row["id_immagine"]!=NULL){
+EOL;
+			} elseif($row["id_immagine"]!=NULL){
 				
-				$cing_res = pg_query($conn, "SELECT * FROM immagine WHERE mail = '$row["mail"]' AND id_cinguettio = $row["id_immagine"]");
+				
+				$cing_res = pg_query($conn, "SELECT * FROM immagine WHERE mail = '$row_mail' AND id_immagine = ".$row["id_immagine"]);
 				$cing = pg_fetch_assoc($cing_res);
 				
 				$mail = $cing["mail"];
@@ -254,12 +272,12 @@ EOL
 <img id="immagine_url_$id" src="$url" style="width:100%" class="w3-margin-bottom">
 <button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
 <button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
-<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-close"></i>  Segnala</button>
 </div> 
-EOL
+EOL;
 			} else {
 				
-				$cing_res = pg_query($conn, "SELECT * FROM luogo WHERE mail = '$row["mail"]' AND id_luogo = $row["id_immagine"]");
+				$cing_res = pg_query($conn, "SELECT * FROM luogo WHERE mail = '$row_mail' AND id_luogo = ".$row["id_luogo"]);
 				$cing = pg_fetch_assoc($cing_res);
 				
 				$mail = $cing["mail"];
@@ -274,12 +292,12 @@ EOL
 <span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
 <h4 id="nome_seguito_$id">$mail</h4><br>
 <hr class="w3-clear">
-<iframe width="100%" height="400px" style="border:0" src="https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lon&zoom=16&key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw"></iframe>
+<div id="map_$id" class="w3-container w3-padding" style='width:100%;height:400px;'></div>
 <button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
 <button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
-<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-close"></i>  Segnala</button>
 </div> 
-EOL
+EOL;
 			}
 		}
 		

@@ -4,7 +4,7 @@
 	$mail = $_POST["mail"];
 	$pssw = $_POST["pssw"];
 	
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = pg_connect("host=localhost port=5432 dbname=cinguettio user=postgres password=unimi");
 	
 	if(!$conn){
 		print "Connection to DB failed, repeat later";
