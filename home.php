@@ -233,7 +233,7 @@ EOL;
       
 		<button id="modal_button" onclick="document.getElementById('modal_post').style.display='block'" class="w3-btn" style="display:none;"></button>
 
-		<div id="modal_post" class="w3-modal w3-animate-opacity w3-animate-top">
+		<div id="modal_post" class="w3-modal">
 			<div class="w3-modal-content">
 				<div class="w3-container">
 					<span id="modal_close" onclick="document.getElementById('modal_post').style.display='none'" class="w3-closebtn" style="display:none;">&times;</span>
