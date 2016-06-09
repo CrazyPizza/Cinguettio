@@ -2,19 +2,26 @@
 	session_start();
 
 	if(!isset($_SESSION["user"])){
-		header("Location: index.html");
+		header("Location: index.php");
 	}
 
 	$user = $_SESSION["user"];
 	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
 	
 	$query_res = pg_query($conn, "SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo FROM cinguettio WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo FROM immagine WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo FROM luogo WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user') ORDER BY data_e_ora DESC)) AS bacheca LIMIT 5");
-	$personal = pg_fetch_assoc(pg_query($conn, "SELECT * FROM utente JOIN luogo ON utente.creatore_luogo=luogo.mail AND utente.id_luogo=luogo.id_luogo WHERE mail = '$user'"));
+	$personal = pg_fetch_assoc(pg_query($conn, "SELECT * FROM utente JOIN luogo ON utente.creatore_luogo=luogo.mail AND utente.id_luogo=luogo.id_luogo WHERE utente.mail = '$user'"));
+	$avatar = pg_fetch_array(pg_query($conn, "SELECT sesso FROM utente WHERE mail='$user'"))[0];
 	
+	if($avatar==1){
+		$avatar = "img_avatar2.png";
+	} else {
+		$avatar = "img_avatar5.png";
+	}
 ?>
 
 <!DOCTYPE html>
 <html>
+<head>
 <title>Cinguettio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
@@ -25,7 +32,8 @@
 <style>
 html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 </style>
-<body class="w3-theme-l5" onreload="location.href = 'http://localhost:8000/progetto/home.php';">
+</head>
+<body class="w3-theme-l5">
 
 <script src="buttonhandler.js"></script>
 <!-- Navbar -->
@@ -35,7 +43,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     <a class="w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
   </li>
   <li><a href="#" class="w3-padding-large w3-theme-d4"><i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right"></i>Cinguettio</a></li>
-  <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="News"><i class="fa fa-globe"></i></a></li>
+  <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Home"><i class="fa fa-globe"></i></a></li>
   <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a></li>
   <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope"></i></a></li>
   <li class="w3-hide-small w3-dropdown-hover">
@@ -46,14 +54,14 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
       <a href="#">Jane likes your post</a>
     </div>
   </li>
-  <li class="w3-hide-small w3-right"><a href="#" class="w3-padding-large w3-hover-white" title="My Account"><img src="img_avatar2.png" class="w3-circle" style="height:25px;width:25px" alt="Avatar"></a></li>
+  <li class="w3-hide-small w3-right"><a href="logout.php" class="w3-padding-large w3-hover-white" title="Log Out"><i class="fa fa-close" style="color:red"></i></a></li>
  </ul>
 </div>
 
 <!-- Navbar on small screens -->
 <div id="navDemo" class="w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:51px">
   <ul class="w3-navbar w3-left-align w3-large w3-theme">
-    <li><a class="w3-padding-large" href="#">Link 1</a></li>
+    <li><a class="w3-padding-large" href="#"><i class="fa fa-globe"></i> Home</a></li>
     <li><a class="w3-padding-large" href="#">Link 2</a></li>
     <li><a class="w3-padding-large" href="#">Link 3</a></li>
     <li><a class="w3-padding-large" href="#">Il mio profilo</a></li>
@@ -70,11 +78,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
       <div class="w3-card-2 w3-round w3-white">
         <div class="w3-container">
          <h4 class="w3-center"><?php print ucfirst(explode("@", $user)[0]); ?></h4>
-         <p class="w3-center"><img src="img_avatar3.png" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
+         <p class="w3-center"><img src="<?php print $avatar; ?>" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
          <hr>
-         <p><i name="citta_nascita" class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["luogo_nascita"]; ?></p>
+         <p><i name="citta_nascita" class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["citta_residenza"]; ?></p>
          <p><i name="data_nascita" class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["data_nascita"]; ?></p>
-         <p><i name="data_nascita" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php print print "<p><a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$personal["latitudine"].",".$personal["longitudine"]."\" target=\"_blank\">".$personal["latitudine"].", ".$personal["longitudine"]."</a></p><hr>"; ?></p>
+         <p><i name="data_nascita" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php if($personal["latitudine"]!=null && $personal["longitudine"]!=null){print "<a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$personal["latitudine"].",".$personal["longitudine"]."\" target=\"_blank\" style=\"text-decoration:none;\">".$personal["latitudine"].", ".$personal["longitudine"]."</a>";} ?></p>
         </div>
       </div>
       <br>
@@ -225,7 +233,7 @@ EOL;
       
 		<button id="modal_button" onclick="document.getElementById('modal_post').style.display='block'" class="w3-btn" style="display:none;"></button>
 
-		<div id="modal_post" class="w3-modal">
+		<div id="modal_post" class="w3-modal w3-animate-opacity w3-animate-top">
 			<div class="w3-modal-content">
 				<div class="w3-container">
 					<span id="modal_close" onclick="document.getElementById('modal_post').style.display='none'" class="w3-closebtn" style="display:none;">&times;</span>
@@ -237,14 +245,14 @@ EOL;
 		<script>
 			if(location.href.split('=')[1]=='ok'){
 				document.getElementById('modal_button').click();
-				document.getElementById('yea_or_not').className = 'w3-green';
-				document.getElementById('yea_or_not').innerHTML = "Hai cinguettato con successo!";
-				setTimeout(function(){document.getElementById('modal_close').click();}, 1500);
-			} else if(location.href.split('=')[1]=='ok'){
+				document.getElementById('yea_or_not').innerHTML = "<b>Hai cinguettato con successo!</b>";
+				document.getElementById('yea_or_not').style.color = 'green';
+				setTimeout(function(){document.getElementById('modal_close').click(); location.href = 'home.php';}, 1500);
+			} else if(location.href.split('=')[1]=='nop'){
 				document.getElementById('modal_button').click();
-				document.getElementById('yea_or_not').className = 'w3-red';
-				document.getElementById('yea_or_not').innerHTML = "E' avvenuto un disguido, riprovare più tardi";
-				setTimeout(function(){document.getElementById('modal_close').click();}, 1500);
+				document.getElementById('yea_or_not').innerHTML = "<b>E' avvenuto un disguido, riprovare più tardi</b>";
+				document.getElementById('yea_or_not').style.color = 'red';
+				setTimeout(function(){document.getElementById('modal_close').click(); location.href = 'home.php';}, 1500);
 			}
 		</script>
 	  
@@ -268,16 +276,21 @@ EOL;
 				$testo = $cing["testo"];
 				$name = ucfirst(explode("@", $mail)[0]);
 				
+				$avatar = pg_fetch_array(pg_query($conn, "SELECT sesso FROM utente WHERE mail='$row_mail'"))[0];
+				if($avatar==1){
+					$avatar = "img_avatar2.png";
+				} else {
+					$avatar = "img_avatar5.png";
+				}
+				
 				print <<<EOL
 <div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
-<img id="avatar_$id" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+<img id="avatar_$id" src="$avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
 <span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
 <h4 id="nome_seguito_$id">$name</h4><br>
 <hr class="w3-clear">
 <p id="testo_cinguettio_$id">$testo</p>
-<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
-<button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
-<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-close"></i>  Segnala</button>
+<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" onclick="segnala('cinguettio', $id)><i class="fa fa-close"></i>  Segnala</button>
 </div> 
 EOL;
 			} elseif($row["id_immagine"]!=NULL){
@@ -293,17 +306,22 @@ EOL;
 				$desc = $cing["descrizione"];
 				$name = ucfirst(explode("@", $mail)[0]);
 				
+				$avatar = pg_fetch_array(pg_query($conn, "SELECT sesso FROM utente WHERE mail='$row_mail'"))[0];
+				if($avatar==1){
+					$avatar = "img_avatar2.png";
+				} else {
+					$avatar = "img_avatar5.png";
+				}
+				
 				print <<<EOL
 <div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
-<img id="avatar_$id" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+<img id="avatar_$id" src="$avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
 <span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
 <h4 id="nome_seguito_$id">$name</h4><br>
 <hr class="w3-clear">
 <p id="immagine_descrizione_$id">$desc</p>
 <img id="immagine_url_$id" src="$url" style="width:100%" class="w3-margin-bottom">
-<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
-<button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
-<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-close"></i>  Segnala</button>
+<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button>
 </div> 
 EOL;
 			} else {
@@ -318,16 +336,22 @@ EOL;
 				$lon = $cing["longitudine"];
 				$name = ucfirst(explode("@", $mail)[0]);
 				
+				$avatar = pg_fetch_array(pg_query($conn, "SELECT sesso FROM utente WHERE mail='$row_mail'"))[0];
+				if($avatar==1){
+					$avatar = "img_avatar2.png";
+				} else {
+					$avatar = "img_avatar5.png";
+				}
+				
 				print <<<EOL
 <div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;"><br>
-<img id="avatar_$id" src="img_avatar6.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
+<img id="avatar_$id" src="$avatar" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">
 <span id="timestamp_$id" class="w3-right w3-opacity">$data</span>
 <h4 id="nome_seguito_$id">$name</h4><br>
 <hr class="w3-clear">
+<div id="$id" style="display:none">$lat,$lon</div>
 <iframe width="100%" height="400" frameborder="0" style="border:0;" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=$lat,$lon" allowfullscreen></iframe>
-<button id="apprezzamento_$id" type="button" class="w3-btn w3-theme-d1 w3-margin-bottom"><i class="fa fa-thumbs-up"></i>  Apprezzamento</button> 
 <button id="preferimento_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
-<button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-close"></i>  Segnala</button>
 </div>
 EOL;
 			}
@@ -346,7 +370,7 @@ EOL;
         <button id="preferimento" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom"><i class="fa fa-heart"></i>  Preferisci</button>
         <button type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" style="position:absolute;right:12px;"><i class="fa fa-close"></i>  Segnala</button>
       </div> -->
-      
+	
     <!-- End Middle Column -->
     </div>
     
@@ -354,10 +378,12 @@ EOL;
     <div class="w3-col m2">
       
       <div class="w3-card-2 w3-round w3-white w3-padding-16 w3-center">
-	   <div style="padding: 0px 5px;">
+	   <div class="w3-dropdown-hover" style="padding: 0px 5px;">
 		<input id="search_friend" class="w3-input w3-border" type="text" style="margin-bottom: 5px;">
-		<button type="button" class="w3-btn w3-theme" onclick=""><i class="fa fa-search"> Cerca i tuoi amici</i></button>
+		<div id="search_result" class="w3-dropdown-content w3-border" style="right:0;width:100%;">
+        </div>
        </div>
+	   <button type="button" class="w3-btn w3-theme" onclick="location.href = 'ricerca.php'"><i class="fa fa-search"> Ricerca avanzata</i></button>
 	  </div>
       <br>
       
@@ -410,5 +436,6 @@ function openNav() {
 
 <script src="http://maps.googleapis.com/maps/api/js"></script>
 <script src="googlemap.js"></script>
+<script src="search.js"></script>
 </body>
 </html>

@@ -1,3 +1,7 @@
+function segnala(tipo, id){
+	
+}
+
 function cinguetta(){
 	var form = document.createElement('FORM');
 	form.method = 'POST';
@@ -82,3 +86,47 @@ function luoga(){
 	
 	form.submit();
 }
+
+/* Alternativa alle funzioni riportate sopra
+Verrebbe tolto lo script per la gestione del modal "modal-post" nella home poiché sostituito da questo
+
+function pubblica(tipo){
+	var http = new XMLHttpRequest();
+	var url = "queryhandler.php";
+	
+	switch(tipo){
+		case 'cinguettio':
+			url = url+'?tipo='+tipo+'&testo='+document.getElementById('post_text').value;
+			break
+		case 'immagine':
+			url = url+'?tipo='+tipo+'&url='+document.getElementById('immagine_url').value+'&descrizione='+document.getElementById('immagine_desc').value;
+			break;
+		case 'luogo':
+			url = url+'?tipo='+tipo+'&lat='+document.getElementById('luogo_lat').value+'&long='+document.getElementById('luogo_lon').value;
+			break;
+	}
+
+	http.onreadystatechange = function() {
+		if (http.readyState == 4 && http.status == 200) {
+			risposta(http.responseText);
+		}
+	};
+	
+	http.open("GET", url, true);
+	http.send();
+}
+
+function risposta(text){
+	if(text=='ok'){
+		document.getElementById('modal_button').click();
+		document.getElementById('yea_or_not').innerHTML = "Hai cinguettato con successo!";
+		document.getElementById('yea_or_not').style.color = 'green';
+		setTimeout(function(){document.getElementById('modal_close').click();}, 3000);
+	} else if(location.href.split('=')[1]=='nop'){
+		document.getElementById('modal_button').click();
+		document.getElementById('yea_or_not').innerHTML = "E' avvenuto un disguido, riprovare più tardi";
+		document.getElementById('yea_or_not').style.color = 'red';
+		setTimeout(function(){document.getElementById('modal_close').click();}, 3000);
+	}
+}
+*/

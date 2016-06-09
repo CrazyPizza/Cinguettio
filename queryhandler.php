@@ -35,11 +35,19 @@
 	
 	$query_res = pg_query($conn, $query);
 	
-	print pg_last_error();
 	if(!$query_res){
-		header("Location: home.php?res=no");
+		header("Location: home.php?res=nop");
 	}
 
 	header("Location: home.php?res=ok");
 	
+	//alternativamente
+	//
+	// if(!$query_res){
+	// 	 print "nop";
+	// }
+
+	// print "ok";
+	//
+	// in parallelo all'alternativa in buttonhandler.js
 ?>
