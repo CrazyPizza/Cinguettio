@@ -43,7 +43,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   </li>
   <li><a href="#" class="w3-padding-large w3-theme-d4"><i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right"></i>Cinguettio</a></li>
   <li class="w3-hide-small"><a href="home.php" class="w3-padding-large w3-hover-white" title="Home"><i class="fa fa-globe"></i></a></li>
-  <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a></li>
+  <li class="w3-hide-small"><a href="user_setting.php" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a></li>
   <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope"></i></a></li>
   <li class="w3-hide-small w3-dropdown-hover">
     <a href="#" class="w3-padding-large w3-hover-white" title="Notifications"><i class="fa fa-bell"></i><span class="w3-badge w3-right w3-small w3-green">3</span></a>     
@@ -61,9 +61,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <div id="navDemo" class="w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:51px">
   <ul class="w3-navbar w3-left-align w3-large w3-theme">
     <li><a class="w3-padding-large" href="home.php"><i class="fa fa-globe"></i> Home</a></li>
-    <li><a class="w3-padding-large" href="#">Link 2</a></li>
-    <li><a class="w3-padding-large" href="#">Link 3</a></li>
-    <li><a class="w3-padding-large" href="#">Il mio profilo</a></li>
+    <li><a class="w3-padding-large" href="user_setting.php"><i class="fa fa-user"></i> Account</a></li>
+    <li><a class="w3-padding-large" href="#"><i class="fa fa-search"></i> Ricerca</a></li>
+	<li><a class="w3-padding-large" href="logout.php"><i class="fa fa-close" style="color:red"></i> Logout</a></li>
   </ul>
 </div>
 
@@ -81,7 +81,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
          <hr>
          <p><i name="citta_nascita" class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["luogo_nascita"]; ?></p>
          <p><i name="data_nascita" class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["data_nascita"]; ?></p>
-         <p><i name="data_nascita" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php if($personal["latitudine"]!=null && $personal["longitudine"]!=null){print "<a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$personal["latitudine"].",".$personal["longitudine"]."\" target=\"_blank\" style=\"text-decoration:none;\">".$personal["latitudine"].", ".$personal["longitudine"]."</a>";} ?></p>
+         <p><i name="luogo_pref" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php if($personal["latitudine"]!=null && $personal["longitudine"]!=null){print "<a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$personal["latitudine"].",".$personal["longitudine"]."\" target=\"_blank\" style=\"text-decoration:none;\">".$personal["latitudine"].", ".$personal["longitudine"]."</a>";} ?></p>
         </div>
       </div>
       <br>
@@ -167,6 +167,7 @@ EOL;
             <form class="w3-container w3-padding" name="research" action="ris_ricerca.php" method="GET">
               <h6 class="w3-opacity">Ricerca avanzata</h6>
 			   <div class="w3-container w3-padding" >
+				<label>Mail</label><input class="w3-check" type="checkbox"><input class="w3-input w3-border w3-animate-input" name="mail" type="text" style="width:0%" disabled><br>
 			    <label>Nome</label><input class="w3-check" type="checkbox"><input class="w3-input w3-border w3-animate-input" name="nome" type="text" style="width:0%" disabled><br>
 				<label>Cognome</label><input class="w3-check" type="checkbox"><input class="w3-input w3-border w3-animate-input" name="cognome" type="text" style="width:0%" disabled><br>
 				<label>Città Residenza</label><input class="w3-check" type="checkbox"><input class="w3-input w3-border w3-animate-input" name="citta" type="text" style="width:0%" disabled><br>

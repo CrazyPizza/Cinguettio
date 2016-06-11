@@ -41,9 +41,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
   <li class="w3-hide-medium w3-hide-large w3-opennav w3-right">
     <a class="w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
   </li>
-  <li><a href="#" class="w3-padding-large w3-theme-d4"><i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right"></i>Cinguettio</a></li>
+  <li><a href="home.php" class="w3-padding-large w3-theme-d4"><i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right"></i>Cinguettio</a></li>
   <li class="w3-hide-small"><a href="home.php" class="w3-padding-large w3-hover-white" title="Home"><i class="fa fa-globe"></i></a></li>
-  <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a></li>
+  <li class="w3-hide-small"><a href="user_setting.php" class="w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a></li>
   <li class="w3-hide-small"><a href="#" class="w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope"></i></a></li>
   <li class="w3-hide-small w3-dropdown-hover">
     <a href="#" class="w3-padding-large w3-hover-white" title="Notifications"><i class="fa fa-bell"></i><span class="w3-badge w3-right w3-small w3-green">3</span></a>     
@@ -61,9 +61,9 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <div id="navDemo" class="w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:51px">
   <ul class="w3-navbar w3-left-align w3-large w3-theme">
     <li><a class="w3-padding-large" href="home.php"><i class="fa fa-globe"></i> Home</a></li>
-    <li><a class="w3-padding-large" href="#">Link 2</a></li>
-    <li><a class="w3-padding-large" href="#">Link 3</a></li>
-    <li><a class="w3-padding-large" href="#">Il mio profilo</a></li>
+    <li><a class="w3-padding-large" href="user_setting.php"><i class="fa fa-user"></i> Account</a></li>
+    <li><a class="w3-padding-large" href="ricerca.php"><i class="fa fa-search"></i> Ricerca</a></li>
+	<li><a class="w3-padding-large" href="logout.php"><i class="fa fa-close" style="color:red"></i> Logout</a></li>
   </ul>
 </div>
 
@@ -81,7 +81,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
          <hr>
          <p><i name="citta_nascita" class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["luogo_nascita"]; ?></p>
          <p><i name="data_nascita" class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["data_nascita"]; ?></p>
-         <p><i name="data_nascita" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php if($personal["latitudine"]!=null && $personal["longitudine"]!=null){print "<a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$personal["latitudine"].",".$personal["longitudine"]."\" target=\"_blank\" style=\"text-decoration:none;\">".$personal["latitudine"].", ".$personal["longitudine"]."</a>";} ?></p>
+         <p><i name="luogo_pref" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php if($personal["latitudine"]!=null && $personal["longitudine"]!=null){print "<a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$personal["latitudine"].",".$personal["longitudine"]."\" target=\"_blank\" style=\"text-decoration:none;\">".$personal["latitudine"].", ".$personal["longitudine"]."</a>";} ?></p>
         </div>
       </div>
       <br>
@@ -168,29 +168,34 @@ EOL;
               <h6 class="w3-opacity">Risultato ricerca</h6>
 			   <div class="w3-container w3-padding" >
 			    <?php
-					if(!isset($_GET["nome"]) && !isset($_GET["cognome"]) && !isset($_GET["citta"]) && !isset($_GET["nazione"]) && !isset($_GET["nascita"])){
+					if(!isset($_GET["mail"]) && !isset($_GET["nome"]) && !isset($_GET["cognome"]) && !isset($_GET["citta"]) && !isset($_GET["nazione"]) && !isset($_GET["nascita"])){
 						$tot = pg_query($conn, "SELECT mail FROM utente");
+						print "<table class=\"w3-table-all  w3-hoverable\">";
 						while($row = pg_fetch_array($tot)){
-							print "<p><a href=\"#\">$row[0]</a></p>";	
+							print "<tr><td><a href=\"user.php?id=$row[0]\" style=\"text-decoration:none;\">$row[0]</a></td></tr>";	
 						}
+						print "</table>";
 						exit;
 					} else {
 						while($row = pg_fetch_array($tot_r)){
 							array_push($tot, $row[0]);
 						}
 					}
-
+					
+					$mail = $_GET["mail"];
 					$nome = $_GET["nome"];
 					$cognome = $_GET["cognome"];
 					$citta = $_GET["citta"];
 					$nazione = $_GET["nazione"];
 					$nascita = $_GET["nascita"];
 					
-					$ris = pg_query($conn, "SELECT mail FROM utente WHERE nome LIKE '%$nome%' AND cognome LIKE '%$cognome%' AND citta_residenza LIKE '%$citta%' AND nazionalita LIKE '%$nazione%' AND luogo_nascita LIKE '%$nascita%'");
+					$ris = pg_query($conn, "(SELECT mail FROM utente WHERE mail LIKE '%$mail%' AND nome LIKE '%$nome%' AND cognome LIKE '%$cognome%' AND citta_residenza LIKE '%$citta%' AND nazionalita LIKE '%$nazione%' AND luogo_nascita LIKE '%$nascita%') EXCEPT (SELECT mail FROM utente WHERE mail = '$user')");
 					
+					print "<table class=\"w3-table-all  w3-hoverable\">";
 					while($row = pg_fetch_array($ris)){
-						print "<p><a href=\"#\">$row[0]</a></p>";
+						print "<tr><td><a href=\"user.php?id=$row[0]\" style=\"text-decoration:none;\">$row[0]</a></td></tr>";
 					}
+					print "</table>";
 
 				?>
 			   </div>
