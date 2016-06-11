@@ -8,16 +8,15 @@
 	
 	$query_res = pg_query($conn, "SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM cinguettio WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user')) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM immagine WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user')) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo, data_e_ora FROM luogo WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user'))) AS bacheca ORDER BY data_e_ora DESC LIMIT 5 OFFSET $off");
 	
-	$bol = "true";
-
+	$bol = true;
+	
 	while ($row = pg_fetch_assoc($query_res)) {
 			
 		$row_mail = $row["mail"];
-			
-		if(!strcmp($row_mail, "")){
+		
+		if($row_mail!=null){
 			
 			if($row["id_cinguettio"]!=null){
-				
 				
 				$cing_res = pg_query($conn, "SELECT mail, id_cinguettio, testo, now()-data_e_ora AS temp FROM cinguettio WHERE mail = '$row_mail' AND id_cinguettio = ".$row["id_cinguettio"]);
 				$cing = pg_fetch_assoc($cing_res);
@@ -122,19 +121,21 @@ EOL;
 </div>
 EOL;
 			}
-		} else {
-			$bol = "false";
-			break;	
+		} 
+		if($row_mail==null){
+			$bol = false;
+			break;
 		}
 	}
 	
-	if($bol=="true"){
+	if($bol){
 		print <<<EOL
 <div id="last_post" class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;">
 <div style="text-align:center;"><img src="loader.gif" alt="loader" style="width:5%;height:auto;"></div>
 </div>
 EOL;
-	} else {
+	}
+	if(!$bol){
 		print "finish";	
 	}
 
