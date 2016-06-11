@@ -293,7 +293,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 			
 			$row_mail = $row["mail"];
 			
-			if($row["id_cinguettio"]!=NULL){
+			if($row["id_cinguettio"]!=null){
 				
 				
 				$cing_res = pg_query($conn, "SELECT mail, id_cinguettio, testo, now()-data_e_ora AS temp FROM cinguettio WHERE mail = '$row_mail' AND id_cinguettio = ".$row["id_cinguettio"]);
@@ -322,7 +322,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
 <button id="segnala_$id" type="button" class="w3-btn w3-theme-d2 w3-margin-bottom" onclick="segnala('cinguettio', $id)><i class="fa fa-close"></i>  Segnala</button>
 </div> 
 EOL;
-			} elseif($row["id_immagine"]!=NULL){
+			} elseif($row["id_immagine"]!=null){
 				
 				
 				$cing_res = pg_query($conn, "SELECT mail, id_immagine, url, descrizione, now()-data_e_ora AS time FROM immagine WHERE mail = '$row_mail' AND id_immagine = ".$row["id_immagine"]);
