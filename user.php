@@ -6,7 +6,7 @@
 	}
 
 	$user = $_SESSION["user"];
-	$visit = $q_url =  explode("=", $_SERVER['QUERY_STRING'])[1];
+	$visit = $_GET["id"];	
 		
 	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
 	
@@ -88,8 +88,8 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
          <p><i name="citta_nascita" class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["citta_residenza"]; ?></p>
          <p><i name="data_nascita" class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> <?php print $personal["data_nascita"]; ?></p>
          <p><i name="luogo_pref" class="fa fa-gittip fa-fw w3-margin-right w3-text-theme"></i> <?php if($luogo_pref["latitudine"]!=null && $luogo_pref["longitudine"]!=null){print "<a href=\"https://www.google.com/maps/embed/v1/place?key=AIzaSyD59XdvHyQE8yPhgo15Vk9IBqpyMbYPHmw&q=".$luogo_pref["latitudine"].",".$luogo_pref["longitudine"]."\" target=\"_blank\" style=\"text-decoration:none;\">".$luogo_pref["latitudine"].", ".$luogo_pref["longitudine"]."</a>";} ?></p>
-         <p><i name="follow" class="fa fa-sign-in fa-fw w3-margin-right w3-text-theme"></i> <?php print "Follow <span class=\"w3-badge w3-green\">$follow</span>"; ?></p>
-		 <p><i name="follower" class="fa fa-sign-out fa-fw w3-margin-right w3-text-theme"></i> <?php print "Follower <span class=\"w3-badge w3-blue\">$follower</span>"; ?></p>
+         <p><i name="follow" class="fa fa-sign-out fa-fw w3-margin-right w3-text-theme"></i> <?php print "Follow <span class=\"w3-badge w3-green\">$follow</span>"; ?></p>
+		 <p><i name="follower" class="fa fa-sign-in fa-fw w3-margin-right w3-text-theme"></i> <?php print "Follower <span class=\"w3-badge w3-blue\">$follower</span>"; ?></p>
 	     <?php
 			$sex = "Maschio";
 			if($personal["sesso"]==0){
@@ -180,7 +180,7 @@ EOL;
     </div>
     
     <!-- Middle Column -->
-    <div class="w3-col m7">
+    <div id="middle_coloumn" class="w3-col m7">
 	
 	  <?php
         $query_res = pg_query($conn, "SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM cinguettio WHERE mail = '$visit' ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM immagine WHERE mail = '$visit' ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo, data_e_ora FROM luogo WHERE mail = '$visit' ORDER BY data_e_ora DESC)) AS bacheca ORDER BY data_e_ora DESC LIMIT 5");
@@ -298,8 +298,8 @@ EOL;
 		}
 		
 		print <<<EOL
-<div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;">
-<div style="text-align:center;"><p>Post finiti</p></div>
+<div id="last_post" class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;">
+<div style="text-align:center;"><img src="loader.gif" alt="loader" style="width:5%;height:auto;"></div>
 </div>
 EOL;
 
@@ -431,5 +431,6 @@ function openNav() {
 <script src="http://maps.googleapis.com/maps/api/js"></script>
 <script src="googlemap.js"></script>
 <script src="search.js"></script>
+<script src="recharge_user.js"></script>
 </body>
 </html>

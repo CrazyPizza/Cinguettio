@@ -188,7 +188,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Open Sans", sans-serif}
     </div>
     
     <!-- Middle Column -->
-    <div class="w3-col m7">
+    <div id="middle_coloumn" class="w3-col m7">
 	   
 	   <div class="w3-row-padding">
 	    <div class="w3-col m12">
@@ -402,8 +402,8 @@ EOL;
 		}
 		
 		print <<<EOL
-<div class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;">
-<div style="text-align:center;"><p>Post finiti</p></div>
+<div id="last_post" class="w3-container w3-card-2 w3-white w3-round w3-margin" style="position: relative;">
+<div style="text-align:center;"><img src="loader.gif" alt="loader" style="width:5%;height:auto;"></div>
 </div>
 EOL;
 		
@@ -487,5 +487,6 @@ function openNav() {
 <script src="http://maps.googleapis.com/maps/api/js"></script>
 <script src="googlemap.js"></script>
 <script src="search.js"></script>
+<script src="recharge_user_setting.js"></script>
 </body>
 </html>
