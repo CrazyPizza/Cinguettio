@@ -1,7 +1,7 @@
 <?php
 	session_start();
-
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = pg_connect("host=localhost port=5432 dbname=cinguettio user=postgres password=vittorio");
+	//$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
 	if(!$conn){
 		header("Location: home.php?res=no");
 	}

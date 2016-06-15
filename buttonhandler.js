@@ -1,6 +1,3 @@
-function segnala(tipo, id){
-	
-}
 
 function cinguetta(){
 	var form = document.createElement('FORM');
@@ -86,6 +83,107 @@ function luoga(){
 	
 	form.submit();
 }
+
+function segnala(elementId){
+	var form = document.createElement('FORM');
+	form.method = 'POST';
+	form.action = 'flag.php';
+	form.style.display = 'none';
+	
+	var id_post = document.createElement('INPUT');
+	id_post.type = 'TEXT';
+	id_post.name = 'id_post';
+	
+	var propietario = document.createElement('INPUT');
+	propietario.type = 'TEXT';
+	propietario.name = 'propietario';
+	
+	var tipo = document.createElement('INPUT');
+	tipo.type = 'TEXT';
+	tipo.name = 'tipo';
+
+	id_post.value= document.getElementById('idcinguettio_'+elementId).innerText;
+	propietario.value= document.getElementById('idpersona_'+elementId).innerText;
+	tipo.value='segnalazione';
+	
+	form.appendChild(id_post);
+	form.appendChild(propietario);
+	form.appendChild(tipo);
+	document.body.appendChild(form);
+
+	form.submit();
+	
+}
+
+function apprezza(elementId){
+	var form = document.createElement('FORM');
+	form.method = 'POST';
+	form.action = 'flag.php';
+	form.style.display = 'none';
+	
+	var id_post = document.createElement('INPUT');
+	id_post.type = 'TEXT';
+	id_post.name = 'id_post';
+	
+	var propietario = document.createElement('INPUT');
+	propietario.type = 'TEXT';
+	propietario.name = 'propietario';
+	
+	var tipo = document.createElement('INPUT');
+	tipo.type = 'TEXT';
+	tipo.name = 'tipo';
+	
+	var descrizione = document.createElement('INPUT');
+	descrizione.type = 'TEXT';
+	descrizione.name = 'descrizione';
+	
+	
+	id_post.value= document.getElementById('idimmagine_'+elementId).innerText;
+	propietario.value= document.getElementById('idpersona_'+elementId).innerText;
+	tipo.value='apprezzamento';	
+	descrizione.value= document.getElementById('appr_text_'+elementId).value;
+	
+	form.appendChild(descrizione);
+	form.appendChild(id_post);
+	form.appendChild(propietario);
+	form.appendChild(tipo);
+	document.body.appendChild(form);
+
+	form.submit();
+	
+}
+
+function preferisci(elementId){
+	var form = document.createElement('FORM');
+	form.method = 'POST';
+	form.action = 'flag.php';
+	form.style.display = 'none';
+	
+	var id_post = document.createElement('INPUT');
+	id_post.type = 'TEXT';
+	id_post.name = 'id_post';
+	
+	var propietario = document.createElement('INPUT');
+	propietario.type = 'TEXT';
+	propietario.name = 'propietario';
+	
+	var tipo = document.createElement('INPUT');
+	tipo.type = 'TEXT';
+	tipo.name = 'tipo';
+
+	id_post.value= document.getElementById('idluogo_'+elementId).innerText;
+	propietario.value= document.getElementById('idpersona_'+elementId).innerText;
+	tipo.value='preferenzaLuogo';
+	
+	form.appendChild(id_post);
+	form.appendChild(propietario);
+	form.appendChild(tipo);
+	document.body.appendChild(form);
+
+	form.submit();
+	
+}
+
 
 /* Alternativa alle funzioni riportate sopra
 Verrebbe tolto lo script per la gestione del modal "modal-post" nella home poiché sostituito da questo

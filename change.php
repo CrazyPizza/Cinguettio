@@ -6,7 +6,8 @@
 	}
 	
 	$user = $_SESSION["user"];
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	//$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = pg_connect("host=localhost port=5432 dbname=cinguettio user=postgres password=vittorio");
 	
 	$control = pg_fetch_array(pg_query($conn, "SELECT password FROM utente WHERE mail = '$user'"))[0];
 	
