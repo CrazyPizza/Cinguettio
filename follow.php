@@ -1,12 +1,23 @@
 <?php
 	session_start();
 
+	if(!isset($_SESSION["user"])){
+		header("Location: index.php");
+	}
+
+	require('connect.php');
+	
 	$segue = $_SESSION["user"];
 	$seguito =  explode("=", $_SERVER['QUERY_STRING'])[1];
 	$bol = true;
 	
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = connectDB();
 	
+	if(!$conn){
+		print "Connection to DB failed, repeat later";
+		exit;
+	}
+
 	$q_res_f = pg_query($conn, "INSERT INTO segue VALUES ('$segue', '$seguito')");
 	
 	$count = pg_fetch_array(pg_query($conn, "SELECT count(*) FROM segue WHERE seguito = '$seguito'"))[0];

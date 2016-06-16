@@ -1,4 +1,99 @@
-function segnala(tipo, id){
+function segnala(elementId){
+	var form = document.createElement('FORM');
+	form.method = 'POST';
+	form.action = 'flag.php';
+	form.style.display = 'none';
+	
+	var id_post = document.createElement('INPUT');
+	id_post.type = 'TEXT';
+	id_post.name = 'id_post';
+	
+	var propietario = document.createElement('INPUT');
+	propietario.type = 'TEXT';
+	propietario.name = 'propietario';
+	
+	var tipo = document.createElement('INPUT');
+	tipo.type = 'TEXT';
+	tipo.name = 'tipo';
+	
+	form.appendChild(id_post);
+	form.appendChild(propietario);
+	form.appendChild(tipo);
+	document.body.appendChild(form);
+	
+	id_post.value = elementId.split(',')[0];
+	propietario.value = elementId.split(',')[1];
+	tipo.value = 'segnalazione';
+
+	form.submit();
+	
+}
+
+function apprezza(elementId){
+	var form = document.createElement('FORM');
+	form.method = 'POST';
+	form.action = 'flag.php';
+	form.style.display = 'none';
+	
+	var id_post = document.createElement('INPUT');
+	id_post.type = 'TEXT';
+	id_post.name = 'id_post';
+	
+	var propietario = document.createElement('INPUT');
+	propietario.type = 'TEXT';
+	propietario.name = 'propietario';
+	
+	var tipo = document.createElement('INPUT');
+	tipo.type = 'TEXT';
+	tipo.name = 'tipo';
+	
+	var descrizione = document.createElement('INPUT');
+	descrizione.type = 'TEXT';
+	descrizione.name = 'descrizione';
+	
+	form.appendChild(descrizione);
+	form.appendChild(id_post);
+	form.appendChild(propietario);
+	form.appendChild(tipo);
+	document.body.appendChild(form);
+	
+	id_post.value = elementId.split(',')[0];
+	propietario.value = elementId.split(',')[1];
+	tipo.value ='apprezzamento';	
+	descrizione.value = document.getElementById('appr_text_'+elementId).value;
+
+	form.submit();
+	
+}
+
+function preferisci(elementId){
+	var form = document.createElement('FORM');
+	form.method = 'POST';
+	form.action = 'flag.php';
+	form.style.display = 'none';
+	
+	var id_post = document.createElement('INPUT');
+	id_post.type = 'TEXT';
+	id_post.name = 'id_post';
+	
+	var propietario = document.createElement('INPUT');
+	propietario.type = 'TEXT';
+	propietario.name = 'propietario';
+	
+	var tipo = document.createElement('INPUT');
+	tipo.type = 'TEXT';
+	tipo.name = 'tipo';
+	
+	form.appendChild(id_post);
+	form.appendChild(propietario);
+	form.appendChild(tipo);
+	document.body.appendChild(form);
+
+	id_post.value = elementId.split(',')[0];
+	propietario.value = elementId.split(',')[1];
+	tipo.value ='preferenzaLuogo';
+	
+	form.submit();
 	
 }
 

@@ -1,23 +1,24 @@
 <?php
 	session_start();
+	
+	if(!isset($_SESSION["user"])){
+		header("Location: index.php");
+	}
+
+	require('connect.php');
+
 	$user = $_SESSION["user"];
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = connectDB();
 	
 	if(!$conn){
 		print "Connection to DB failed, repeat later";
 		exit;
 	}
 	
-	$query = pg_query($conn, "UPDATE utente SET logged = 0 WHERE mail = '$user'");
+	pg_query($conn, "UPDATE utente SET logged = 0 WHERE mail = '$user'");
 
-	if(!$query){
-		print pg_last_error();
-		exit;
-	}
-	
 	unset($_SESSION["user"]);
 	session_unset();
 	
 	header("Location: index.php");
-
 ?>

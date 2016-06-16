@@ -1,10 +1,12 @@
 <?php
 	session_start();
 	
+	require('connect.php');
+	
 	$mail = $_POST["mail"];
 	$pssw = $_POST["pssw"];
 	
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	$conn = connectDB();
 	
 	if(!$conn){
 		print "Connection to DB failed, repeat later";
@@ -19,7 +21,8 @@
 		exit;
 	}
 	
-	//pg_query($conn, "UPDATE utente SET logged = true WHERE mail = '$user'");
+	pg_query($conn, "UPDATE utente SET logged = 1 WHERE mail = '$user'");
+	
 	$_SESSION["user"] = $user;
 	header("Location: home.php");
 ?>

@@ -1,7 +1,9 @@
 <?php
 	session_start();
 	
-	$conn = pg_connect("host=localhost port=4321 dbname=cinguettio user=postgres password=unimi");
+	require('connect.php');
+
+	$conn = connectDB();
 	
 	if(!$conn){
 		print "Connection to DB failed, repeat later";
