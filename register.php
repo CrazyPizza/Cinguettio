@@ -6,8 +6,7 @@
 	$conn = connectDB();
 	
 	if(!$conn){
-		print "Connection to DB failed, repeat later";
-		exit;
+		header("Location: error.html");
 	}
 
 	$nome = $_POST["nome"];

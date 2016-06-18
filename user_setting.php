@@ -12,8 +12,7 @@ $user = $_SESSION["user"];
 $conn = connectDB();
 
 if(!$conn){
-	print "Connection to DB failed, repeat later";
-	exit;
+	header("Location: error.html");
 }
 
 $query_res = pg_query($conn, "SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM cinguettio WHERE mail = '$user' ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM immagine WHERE mail = '$user' ORDER BY data_e_ora DESC) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo, data_e_ora FROM luogo WHERE mail = '$user' ORDER BY data_e_ora DESC)) AS bacheca ORDER BY data_e_ora DESC LIMIT 5");
@@ -145,9 +144,9 @@ $follower = pg_fetch_array(pg_query($conn, "SELECT count(*) FROM segue WHERE seg
 					
 					<div class="w3-card-2 w3-round">
 						<div class="w3-accordion w3-white">
-							<button onclick="myFunction('Demo1')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-sign-in fa-fw w3-margin-right">
+							<button onclick="myFunction('follow')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-sign-in fa-fw w3-margin-right">
 								</i> Follow <span class="w3-badge w3-green"><?php print $follow ?></span></button>
-							<div id="Demo1" class="w3-accordion-content w3-container">
+							<div id="follow" class="w3-accordion-content w3-container">
 								
 								<?php
 $mail_follow = pg_query($conn, "SELECT seguito FROM segue WHERE segue = '$user'");
@@ -158,9 +157,9 @@ while($row = pg_fetch_array($mail_follow)){
 								?>
 								
 							</div>
-							<button onclick="myFunction('Demo2')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-sign-out fa-fw w3-margin-right">
-								</i> Follower <span class="w3-badge w3-blue"><?php print $follower ?></span></button>
-							<div id="Demo2" class="w3-accordion-content w3-container">
+							<button onclick="myFunction('follower')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-sign-out fa-fw w3-margin-right">
+								</i> Follower <span class="w3-badge w3-blue"><?php print $follower; ?></span></button>
+							<div id="follower" class="w3-accordion-content w3-container">
 								
 								<?php
 $mail_follower = pg_query($conn, "SELECT segue FROM segue WHERE seguito = '$user'");
@@ -171,9 +170,9 @@ while($row = pg_fetch_array($mail_follower)){
 								?>
 								
 							</div>
-							<button onclick="myFunction('Demo3')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right">
+							<button onclick="myFunction('infos')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right">
 								</i> Le mie informazioni</button>
-							<div id="Demo3" class="w3-accordion-content w3-container" style="text-align:center;">
+							<div id="infos" class="w3-accordion-content w3-container" style="text-align:center;">
 								<div class="w3-row-padding w3-container" style="padding-left:0px;">
 									<br>
 									
@@ -200,9 +199,50 @@ print "</table>";
 									<br>
 								</div>
 							</div>
-						</div>
-					</div>
-					<br>
+							<button onclick="myFunction('segnalazioni')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-close fa-fw w3-margin-right">
+								</i> Le mie segnalazioni</button>
+							<div id="segnalazioni" class="w3-accordion-content w3-container">
+								
+								<?php
+$segn = pg_query($conn, "SELECT mail, testo FROM cinguettio NATURAL JOIN segnalato WHERE segnalante = '$user' ORDER BY data_e_ora DESC");
+
+while($row = pg_fetch_assoc($segn)){
+	print "<p>".$row["testo"]."<small> ".$row["mail"]."</small></p><hr>";
+}
+print "<p>...</p>";
+
+$is_exp = pg_fetch_array(pg_query($conn, "SELECT count(*) FROM esperto WHERE mail = '$user'"))[0];
+
+if($is_exp!=0){
+	$apprezzamento = pg_query($conn, "SELECT url, mail, apprezzamento.descrizione AS appr, immagine.descrizione AS descr FROM apprezzamento JOIN immagine ON apprezzamento.id_immagine=immagine.id_immagine AND creatore_immagine=mail WHERE apprezzante = '$user' ORDER BY data DESC");	
+	
+	print <<<EOL
+</div>
+<button onclick="myFunction('apprezzamenti')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-thumbs-up fa-fw w3-margin-right"></i> I miei apprezzamenti</button>
+<div id="apprezzamenti" class="w3-accordion-content w3-container">
+<div class="w3-row-padding">
+<br>
+EOL;
+	
+	while($row = pg_fetch_assoc($apprezzamento)){
+		$url = $row["url"];
+		$ap = $row["appr"];
+		$des = $row["descr"];
+		$mail = ucfirst(explode("@", $row["mail"])[0]);
+		
+		print <<<EOL
+<div class="w3-half">
+<small>$mail: $des</small>
+<img src="$url" style="width:100%" class="w3-margin-bottom">
+<small>$ap</small>
+</div>
+EOL;
+	}
+	print "<div class=\"w3-half\"><small>...</small></div></div></div></div></div><br>";
+} else {
+	print "</div></div></div><br>";
+}
+								?>
 					<script>
 						function modify(mail, nome, cognome, data, luogo, citta, naz){
 							document.getElementById('Demo3').innerHTML = '<div class="w3-row-padding w3-container" style="padding-left:0px;"><br>'+
@@ -583,10 +623,10 @@ EOL;
 		<br>
 
 		<!-- Footer -->
-		<footer class="w3-container w3-theme-d3 w3-padding-16">
-			<h5>
-				Footer
-			</h5>
+		<footer class="w3-container w3-theme-d3 w3-padding-16 w3-center">
+			<small style="color:light-grey;">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rutrum orci lorem. Maecenas at augue tellus. Praesent id consequat elit, in egestas nulla. Vivamus vestibulum eros eget lacus hendrerit hendrerit. Mauris pulvinar eros eros. Nunc est elit, varius non blandit vel, malesuada non velit.
+			</small>
 		</footer>
 		<footer class="w3-container w3-theme-d5">
 			<p>

@@ -13,8 +13,7 @@ $off =  $_GET["off"];
 $conn = connectDB();
 
 if(!$conn){
-	print "Connection to DB failed, repeat later";
-	exit;
+	header("Location: error.html");
 }
 
 $contatore = pg_fetch_array(pg_query($conn, "SELECT count(*) FROM (SELECT * FROM ((SELECT mail, id_cinguettio, NULL::NUMERIC AS id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM cinguettio WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user')) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, id_immagine, NULL::NUMERIC AS id_luogo, data_e_ora FROM immagine WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user')) UNION (SELECT mail, NULL::NUMERIC AS id_cinguettio, NULL::NUMERIC AS id_immagine, id_luogo, data_e_ora FROM luogo WHERE mail in (SELECT seguito FROM segue WHERE segue = '$user'))) AS bacheca ORDER BY data_e_ora DESC LIMIT 5 OFFSET $off) AS contatore"))[0];

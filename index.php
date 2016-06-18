@@ -14,6 +14,7 @@
 	<!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">-->
 	<!--<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>-->
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" href="fontawesome/css/font-awesome.css">
 	<style>
 		#sfondo {
  			width: 100%; 
@@ -41,9 +42,13 @@
 <br><br>
 
 <div class="row">
-	<div class="col-md-4" style="text-align:center;"><i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right"></i></div>
+	<div class="col-md-4"></div>
 
 	<div id="login" class="w3-card-4 col-md-4 w3-animate-opacity w3-indigo" style="padding-top: 2%;">
+		<header>
+			<strong style="color:#00004d;font-size:3em;">Cinguettio</strong> <i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right w3-xxxlarge w3-right"></i>
+		</header>
+		<hr class="w3-clear">
 		<form name="login" class="w3-container" action="control.php" method="post">
 			<p>
 				<input name="mail" class="w3-input" type="text" required>
@@ -60,6 +65,10 @@
 	</div>
 	
 	<div id="register" class="w3-card-4 col-md-4 w3-animate-opacity w3-indigo" style="padding-top: 2%;display:none;">
+		<header>
+			<strong style="color:#00004d;font-size:3em;">Cinguettio</strong> <i class="fa fa-twitter fa-flip-vertical fa-flip-horizontal w3-margin-right w3-xxxlarge w3-right"></i>
+		</header>
+		<hr class="w3-clear">
 		<form name="register" class="w3-container" action="register.php" method="post">
 			<p>
 				<input name="nome" class="w3-input" type="text" placeholder="Inserire nome" required>

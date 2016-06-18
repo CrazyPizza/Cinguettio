@@ -12,8 +12,7 @@ $user = $_SESSION["user"];
 $conn = connectDB();
 
 if(!$conn){
-	print "Connection to DB failed, repeat later";
-	exit;
+	header("Location: error.html");
 }
 
 $personal = pg_fetch_assoc(pg_query($conn, "SELECT * FROM utente WHERE mail = '$user'"));
@@ -595,10 +594,10 @@ EOL;
 		<br>
 		
 		<!-- Footer -->
-		<footer class="w3-container w3-theme-d3 w3-padding-16">
-			<h5>
-				Fotter
-			</h5>
+		<footer class="w3-container w3-theme-d3 w3-padding-16 w3-center">
+			<small style="color:light-grey;">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rutrum orci lorem. Maecenas at augue tellus. Praesent id consequat elit, in egestas nulla. Vivamus vestibulum eros eget lacus hendrerit hendrerit. Mauris pulvinar eros eros. Nunc est elit, varius non blandit vel, malesuada non velit.
+			</small>
 		</footer>
 		<footer class="w3-container w3-theme-d5">
 			<p>

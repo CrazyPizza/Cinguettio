@@ -10,7 +10,7 @@
 	$conn = connectDB();
 	
 	if(!$conn){
-		header("Location: home.php?res=no");
+		header("Location: home.php?res=nop");
 	}
 
 	$tipo = $_POST["tipo"];

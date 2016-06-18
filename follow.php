@@ -14,8 +14,7 @@
 	$conn = connectDB();
 	
 	if(!$conn){
-		print "Connection to DB failed, repeat later";
-		exit;
+		header("Location: error.html");
 	}
 
 	$q_res_f = pg_query($conn, "INSERT INTO segue VALUES ('$segue', '$seguito')");

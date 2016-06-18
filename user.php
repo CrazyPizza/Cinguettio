@@ -164,9 +164,9 @@ print "<tr><td><strong>Sesso</strong></td><td>$sex</td></tr></table></p>";
 					<!-- Accordion -->
 					<div class="w3-card-2 w3-round">
 						<div class="w3-accordion w3-white">
-							<button onclick="myFunction('Demo1')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-circle-o-notch fa-fw w3-margin-right">
+							<button onclick="myFunction('segnalazioni')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-close fa-fw w3-margin-right">
 								</i> Le mie segnalazioni</button>
-							<div id="Demo1" class="w3-accordion-content w3-container">
+							<div id="segnalazioni" class="w3-accordion-content w3-container">
 								
 								<?php
 $segn = pg_query($conn, "SELECT mail, testo FROM cinguettio NATURAL JOIN segnalato WHERE segnalante = '$visit' ORDER BY data_e_ora DESC");
@@ -183,8 +183,8 @@ if($is_exp!=0){
 	
 	print <<<EOL
 </div>
-<button onclick="myFunction('Demo3')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-users fa-fw w3-margin-right"></i> I miei apprezzamenti</button>
-<div id="Demo3" class="w3-accordion-content w3-container">
+<button onclick="myFunction('apprezzamenti')" class="w3-btn-block w3-theme-l1 w3-left-align"><i class="fa fa-thumbs-up fa-fw w3-margin-right"></i> I miei apprezzamenti</button>
+<div id="apprezzamenti" class="w3-accordion-content w3-container">
 <div class="w3-row-padding">
 <br>
 EOL;
@@ -193,13 +193,13 @@ EOL;
 		$url = $row["url"];
 		$ap = $row["appr"];
 		$des = $row["descr"];
-		$mail = $row["mail"];
+		$mail = ucfirst(explode("@", $row["mail"])[0]);
 		
 		print <<<EOL
 <div class="w3-half">
 <small>$mail: $des</small>
 <img src="$url" style="width:100%" class="w3-margin-bottom">
-<small>$visit: $ap</small>
+<small>$ap</small>
 </div>
 EOL;
 	}
@@ -537,10 +537,10 @@ if(pg_fetch_array($q_res)[0]==""){
 					<br>
 					
 					<!-- Footer -->
-					<footer class="w3-container w3-theme-d3 w3-padding-16">
-						<h5>
-							Footer
-						</h5>
+					<footer class="w3-container w3-theme-d3 w3-padding-16 w3-center">
+						<small style="color:light-grey;">
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rutrum orci lorem. Maecenas at augue tellus. Praesent id consequat elit, in egestas nulla. Vivamus vestibulum eros eget lacus hendrerit hendrerit. Mauris pulvinar eros eros. Nunc est elit, varius non blandit vel, malesuada non velit.
+						</small>
 					</footer>
 					<footer class="w3-container w3-theme-d5">
 						<p>

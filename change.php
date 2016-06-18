@@ -11,8 +11,7 @@
 	$conn = connectDB();
 	
 	if(!$conn){
-		print "Connection to DB failed, repeat later";
-		exit;
+		header("Location: error.html");
 	}
 
 	$control = pg_fetch_array(pg_query($conn, "SELECT password FROM utente WHERE mail = '$user'"))[0];

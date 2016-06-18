@@ -11,8 +11,7 @@
 	$conn = connectDB();
 	
 	if(!$conn){
-		print "Connection to DB failed, repeat later";
-		exit;
+		header("Location: error.html");
 	}
 	
 	pg_query($conn, "UPDATE utente SET logged = 0 WHERE mail = '$user'");
